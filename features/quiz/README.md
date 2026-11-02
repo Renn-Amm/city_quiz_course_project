@@ -1,22 +1,18 @@
-# City Quiz
+# @platform/quiz
 
-A quiz that tells you which city you should live in. You answer questions, each answer gives points, and the total decides your city.
+Everything the city quiz needs, split into modlets that other packages import by name.
 
-Course project for M3 Advanced JavaScript and TypeScript.
+| Import                   | What it gives                                                     |
+| ------------------------ | ----------------------------------------------------------------- |
+| `@platform/quiz/play`    | Types, guards, `show`, `recap`, `award` and the `Session` class   |
+| `@platform/quiz/quizzes` | `loadQuiz(name)`, which reads, parses and checks a quiz JSON file |
+| `@platform/quiz/saved`   | `readSavedGame`, `readSettings` and the functions they use        |
+| `@platform/quiz/outline` | `outline(quiz)` as the default export and `countKinds(quiz)`      |
 
-## Run
-
-Needs Node.js 22.18 or newer.
-
-```sh
-npm install
-npm start
-```
+Files inside a folder cannot be imported from outside, only the folder's `index.ts`.
 
 ## Lint
 
 ```sh
-npm run lint
+pnpm --filter @platform/quiz lint
 ```
-
-This runs the TypeScript type check, Prettier and ESLint.
