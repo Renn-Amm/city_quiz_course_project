@@ -1,40 +1,55 @@
-import { outcome, questions } from "./data.ts"
-import { award, recap, show } from "./quiz.ts"
+import { outcomes, questions } from "./data.ts"
+import { recap, show } from "./quiz.ts"
+import { Session } from "./session.ts"
 import { type Answer } from "./types.ts"
 
 const answers: Answer[] = [
-  { kind: "choice", picked: { label: "Reading on the beach", points: 4 } },
+  {
+    kind: "choice",
+    picked: {
+      label: "Reading on the beach",
+      outcome: "barcelona",
+      points: 4,
+    },
+  },
   { kind: "scale", value: 3 },
   { kind: "yesno", value: false },
+  { kind: "yesno", value: true },
 ]
 
-let total = 0
+const session = new Session(outcomes)
+
+session.start()
 
 for (const index in questions) {
   const question = questions[index]
   const answer = answers[index]
 
-  const points = award(answer)
-  total += points
+  const { outcome, points } = session.record(question, answer)
 
   console.log(show(question))
-  console.log(`Answer worth ${points} points`)
+  console.log(`Answer worth ${points} points for ${outcome}`)
   console.log()
 }
 
-console.log(`Total ${total}`)
-console.log()
+session.finish()
 
 for (const index in questions) {
   console.log(recap(questions[index], answers[index]))
 }
 
-const place = outcome.country
-  ? `${outcome.title}, ${outcome.country}`
-  : outcome.title
+const result = session.result()
 
-const card = `=== ${place} (${outcome.vibe}) ===
-${outcome.description}`
+const place = result.country
+  ? `${result.title}, ${result.country}`
+  : result.title
 
 console.log()
-console.log(card)
+console.log(`You are: ${place} (${result.vibe})`)
+console.log(result.description)
+console.log()
+console.log("You got this because:")
+
+for (const reason of session.explain()) {
+  console.log(`- ${reason}`)
+}

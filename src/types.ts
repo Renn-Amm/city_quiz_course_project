@@ -1,13 +1,17 @@
-export interface Choice {
-  label: string
-  points: number
-}
+export type OutcomeId = "barcelona" | "tokyo" | "reykjavik" | "newyork"
 
 export interface Outcome {
+  id: OutcomeId
   title: string
   description: string
   country?: string
   vibe: "beach" | "mountains" | "big city"
+}
+
+export interface Choice {
+  label: string
+  outcome: OutcomeId
+  points: number
 }
 
 interface BaseQuestion {
@@ -23,10 +27,12 @@ interface ScaleQuestion extends BaseQuestion {
   kind: "scale"
   low: string
   high: string
+  outcome: OutcomeId
 }
 
 interface YesNoQuestion extends BaseQuestion {
   kind: "yesno"
+  outcome: OutcomeId
 }
 
 export type Question = ChoiceQuestion | ScaleQuestion | YesNoQuestion

@@ -20,22 +20,6 @@ export function show(question: Question): string {
   throw new Error("Unknown kind")
 }
 
-export function award(answer: Answer): number {
-  if (answer.kind === "choice") {
-    return answer.picked.points
-  }
-
-  if (answer.kind === "scale") {
-    return answer.value
-  }
-
-  if (answer.kind === "yesno") {
-    return answer.value ? 1 : 0
-  }
-
-  throw new Error("Unknown kind")
-}
-
 export function recap(question: Question, answer: Answer): string {
   if (question.kind !== answer.kind) {
     throw new Error("The answer does not match the question")

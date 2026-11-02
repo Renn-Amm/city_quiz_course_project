@@ -1,22 +1,53 @@
 import { type Outcome, type Question } from "./types.ts"
 
-export const outcome: Outcome = {
-  title: "Barcelona",
-  country: "Spain",
-  vibe: "beach",
-  description:
-    "Beach, sun and late dinners. You like a relaxed city by the sea.",
-}
+export const outcomes: Outcome[] = [
+  {
+    id: "barcelona",
+    title: "Barcelona",
+    country: "Spain",
+    vibe: "beach",
+    description:
+      "Beach, sun and late dinners. You like a relaxed city by the sea.",
+  },
+  {
+    id: "tokyo",
+    title: "Tokyo",
+    country: "Japan",
+    vibe: "big city",
+    description:
+      "Neon, trains on time and food everywhere. You love energy and detail.",
+  },
+  {
+    id: "reykjavik",
+    title: "Reykjavik",
+    country: "Iceland",
+    vibe: "mountains",
+    description:
+      "Quiet streets, wild nature and long nights. You like space to think.",
+  },
+  {
+    id: "newyork",
+    title: "New York",
+    country: "USA",
+    vibe: "big city",
+    description:
+      "Loud, fast and never asleep. You want a city that keeps up with you.",
+  },
+]
 
 export const questions: Question[] = [
   {
     kind: "choice",
     text: "It's Saturday morning. What are you doing?",
     choices: [
-      { label: "Getting a croissant at a cafe", points: 1 },
-      { label: "Hiking outside the city", points: 2 },
-      { label: "Walking around a night market", points: 3 },
-      { label: "Reading on the beach", points: 4 },
+      {
+        label: "Getting a bagel on the way to work",
+        outcome: "newyork",
+        points: 1,
+      },
+      { label: "Hiking outside the city", outcome: "reykjavik", points: 2 },
+      { label: "Walking around a night market", outcome: "tokyo", points: 3 },
+      { label: "Reading on the beach", outcome: "barcelona", points: 4 },
     ],
   },
   {
@@ -24,9 +55,16 @@ export const questions: Question[] = [
     text: "How much do you like crowds and noise?",
     low: "keep me away",
     high: "the more the better",
+    outcome: "newyork",
   },
   {
     kind: "yesno",
     text: "Would you trade sunshine for the northern lights?",
+    outcome: "reykjavik",
+  },
+  {
+    kind: "yesno",
+    text: "Is dinner at 10pm normal for you?",
+    outcome: "barcelona",
   },
 ]
