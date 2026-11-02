@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@platform/tooling": "workspace:*",
+    "@types/node": "catalog:",
     "eslint": "catalog:",
     "knip": "catalog:",
     "prettier": "catalog:",

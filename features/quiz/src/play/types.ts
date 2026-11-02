@@ -3,10 +3,8 @@ export interface Quiz {
   questions: Question[]
 }
 
-export type OutcomeId = "barcelona" | "tokyo" | "reykjavik" | "newyork"
-
 export interface Outcome {
-  id: OutcomeId
+  id: string
   title: string
   description: string
   country?: string
@@ -15,7 +13,7 @@ export interface Outcome {
 
 export interface Choice {
   label: string
-  outcome: OutcomeId
+  outcome: string
   points: number
 }
 
@@ -33,12 +31,12 @@ interface ScaleQuestion extends BaseQuestion {
   kind: "scale"
   low: string
   high: string
-  outcome: OutcomeId
+  outcome: string
 }
 
 interface YesNoQuestion extends BaseQuestion {
   kind: "yesno"
-  outcome: OutcomeId
+  outcome: string
 }
 
 export type Question = ChoiceQuestion | ScaleQuestion | YesNoQuestion
@@ -61,7 +59,7 @@ interface YesNoAnswer {
 export type Answer = ChoiceAnswer | ScaleAnswer | YesNoAnswer
 
 export interface Award {
-  outcome: OutcomeId
+  outcome: string
   points: number
 }
 

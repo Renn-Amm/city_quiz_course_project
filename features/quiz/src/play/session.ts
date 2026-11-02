@@ -3,32 +3,25 @@ import {
   type Answer,
   type Award,
   type Outcome,
-  type OutcomeId,
   type Question,
 } from "./types.ts"
 
 export type Status = "waiting" | "asking" | "done"
 
 export class Session {
-  private tally: Record<OutcomeId, number> = {
-    barcelona: 0,
-    tokyo: 0,
-    reykjavik: 0,
-    newyork: 0,
-  }
-
-  private reasons: Record<OutcomeId, string[]> = {
-    barcelona: [],
-    tokyo: [],
-    reykjavik: [],
-    newyork: [],
-  }
+  private tally: Record<string, number> = {}
+  private reasons: Record<string, string[]> = {}
 
   private outcomes: Outcome[]
   private status: Status = "waiting"
 
   constructor(outcomes: Outcome[]) {
     this.outcomes = outcomes
+
+    for (const outcome of outcomes) {
+      this.tally[outcome.id] = 0
+      this.reasons[outcome.id] = []
+    }
   }
 
   public start(): void {
@@ -45,6 +38,10 @@ export class Session {
     }
 
     const { outcome, points } = award(question, answer)
+
+    if (!(outcome in this.tally)) {
+      throw new Error(`There is no outcome called "${outcome}"`)
+    }
 
     this.tally[outcome] += points
 

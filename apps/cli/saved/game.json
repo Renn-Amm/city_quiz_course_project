@@ -1,0 +1,25 @@
+{
+  "answers": [
+    {
+      "kind": "choice",
+      "picked": {
+        "label": "Reading on the beach",
+        "outcome": "barcelona",
+        "points": 4
+      }
+    },
+    {
+      "kind": "scale",
+      "value": 3
+    },
+    {
+      "kind": "yesno",
+      "value": false
+    },
+    {
+      "kind": "yesno",
+      "value": true
+    }
+  ],
+  "startedAt": "2026-11-02T09:00:00.000Z"
+}

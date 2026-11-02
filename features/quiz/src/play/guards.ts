@@ -1,6 +1,111 @@
-import { outcomes } from "../data.ts"
+import {
+  type Answer,
+  type Choice,
+  type Outcome,
+  type Question,
+  type Quiz,
+  type Settings,
+} from "./types.ts"
 
-import { type Answer, type Choice, type Settings } from "./types.ts"
+export function isQuiz(value: unknown): value is Quiz {
+  if (typeof value !== "object" || value === null) {
+    return false
+  }
+
+  if (
+    !("outcomes" in value) ||
+    !Array.isArray(value.outcomes) ||
+    !value.outcomes.every((outcome) => isOutcome(outcome))
+  ) {
+    return false
+  }
+
+  if (
+    !("questions" in value) ||
+    !Array.isArray(value.questions) ||
+    !value.questions.every((question) => isQuestion(question))
+  ) {
+    return false
+  }
+
+  return true
+}
+
+export function isOutcome(value: unknown): value is Outcome {
+  if (typeof value !== "object" || value === null) {
+    return false
+  }
+
+  if (!("id" in value) || typeof value.id !== "string") {
+    return false
+  }
+
+  if (!("title" in value) || typeof value.title !== "string") {
+    return false
+  }
+
+  if (!("description" in value) || typeof value.description !== "string") {
+    return false
+  }
+
+  if ("country" in value && typeof value.country !== "string") {
+    return false
+  }
+
+  if (
+    !("vibe" in value) ||
+    (value.vibe !== "beach" &&
+      value.vibe !== "mountains" &&
+      value.vibe !== "big city")
+  ) {
+    return false
+  }
+
+  return true
+}
+
+export function isQuestion(value: unknown): value is Question {
+  if (typeof value !== "object" || value === null) {
+    return false
+  }
+
+  if (!("kind" in value) || typeof value.kind !== "string") {
+    return false
+  }
+
+  if (!("text" in value) || typeof value.text !== "string") {
+    return false
+  }
+
+  if ("hint" in value && typeof value.hint !== "string") {
+    return false
+  }
+
+  if (value.kind === "choice") {
+    return (
+      "choices" in value &&
+      Array.isArray(value.choices) &&
+      value.choices.every((choice) => isChoice(choice))
+    )
+  }
+
+  if (value.kind === "scale") {
+    return (
+      "low" in value &&
+      typeof value.low === "string" &&
+      "high" in value &&
+      typeof value.high === "string" &&
+      "outcome" in value &&
+      typeof value.outcome === "string"
+    )
+  }
+
+  if (value.kind === "yesno") {
+    return "outcome" in value && typeof value.outcome === "string"
+  }
+
+  return false
+}
 
 export function isAnswer(value: unknown): value is Answer {
   if (typeof value !== "object" || value === null || !("kind" in value)) {
@@ -36,10 +141,7 @@ export function isChoice(value: unknown): value is Choice {
     return false
   }
 
-  if (
-    !("outcome" in value) ||
-    !outcomes.some((outcome) => outcome.id === value.outcome)
-  ) {
+  if (!("outcome" in value) || typeof value.outcome !== "string") {
     return false
   }
 

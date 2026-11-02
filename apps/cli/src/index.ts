@@ -1,11 +1,34 @@
-import { quiz } from "@platform/quiz/data"
+import path from "node:path"
+
 import outline, { countKinds as kinds } from "@platform/quiz/outline"
-import { recap, Session, show } from "@platform/quiz/play"
-import { loadSavedGame, loadSettings } from "@platform/quiz/saved"
+import {
+  type Quiz,
+  recap,
+  Session,
+  type Settings,
+  show,
+} from "@platform/quiz/play"
+import { loadQuiz } from "@platform/quiz/quizzes"
+import {
+  readSavedGame,
+  readSettings,
+  type SavedGame,
+} from "@platform/quiz/saved"
 
-import { savedGame, savedSettings } from "./saved.ts"
+const saved = path.join(import.meta.dirname, "..", "saved")
 
-const settings = loadSettings(savedSettings)
+let quiz: Quiz
+let settings: Settings
+let game: SavedGame
+
+try {
+  quiz = await loadQuiz("cities")
+  settings = await readSettings(path.join(saved, "settings.json"))
+  game = await readSavedGame(path.join(saved, "game.json"))
+} catch (error) {
+  console.error(error instanceof Error ? error.message : error)
+  process.exit(1)
+}
 
 console.log(`Hello, ${settings.name}`)
 console.log()
@@ -29,7 +52,7 @@ console.log("## Questions")
 console.log()
 
 const session = new Session(quiz.outcomes)
-const { answers } = loadSavedGame(savedGame)
+const { answers } = game
 
 session.start()
 
@@ -69,22 +92,4 @@ console.log("You got this because:")
 
 for (const reason of session.explain()) {
   console.log(`- ${reason}`)
-}
-
-console.log()
-
-const brokenSaves = [
-  () => loadSavedGame('{"answers":[{"kind":"scale","value":"five"}]}'),
-  () => loadSettings('{"name":"Aung","hints":"sometimes"}'),
-  () => loadSettings('{"name":"Aung"'),
-]
-
-for (const load of brokenSaves) {
-  try {
-    load()
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log(error.message)
-    }
-  }
 }
