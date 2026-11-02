@@ -14,7 +14,8 @@
     "lint-typecheck": "nx run-many -t lint-typecheck",
     "lint-eslint": "nx run-many -t lint-eslint",
     "lint-prettier": "nx run-many -t lint-prettier",
-    "lint-knip": "nx run-many -t lint-knip"
+    "lint-knip": "nx run-many -t lint-knip",
+    "start": "nx run @platform/cli:start"
   },
   "devDependencies": {
     "nx": "23.3.0"

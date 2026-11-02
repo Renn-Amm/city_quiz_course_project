@@ -185,6 +185,28 @@ importers:
         specifier: 23.3.0
         version: 23.3.0
 
+  apps/cli:
+    dependencies:
+      '@platform/quiz':
+        specifier: workspace:*
+        version: link:../../features/quiz
+    devDependencies:
+      '@platform/tooling':
+        specifier: workspace:*
+        version: link:../../internal/tooling
+      eslint:
+        specifier: 'catalog:'
+        version: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
+      knip:
+        specifier: 'catalog:'
+        version: 6.44.1
+      prettier:
+        specifier: 'catalog:'
+        version: 3.9.10
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
   features/quiz:
     devDependencies:
       '@platform/tooling':

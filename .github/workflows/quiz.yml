@@ -14,4 +14,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: pnpm --filter quiz lint
+      - run: pnpm --filter @platform/quiz lint

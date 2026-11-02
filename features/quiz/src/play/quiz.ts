@@ -1,5 +1,9 @@
-import { type Settings } from "./load.ts"
-import { type Answer, type Question } from "./types.ts"
+import {
+  type Answer,
+  type Award,
+  type Question,
+  type Settings,
+} from "./types.ts"
 
 export function show(question: Question, settings: Settings): string {
   const hint =
@@ -39,6 +43,26 @@ export function recap(question: Question, answer: Answer): string {
 
   if (question.kind === "yesno" && answer.kind === "yesno") {
     return `${question.text} You said ${answer.value ? "yes" : "no"}.`
+  }
+
+  throw new Error("Unknown kind")
+}
+
+export function award(question: Question, answer: Answer): Award {
+  if (question.kind !== answer.kind) {
+    throw new Error("The answer does not match the question")
+  }
+
+  if (question.kind === "choice" && answer.kind === "choice") {
+    return { outcome: answer.picked.outcome, points: answer.picked.points }
+  }
+
+  if (question.kind === "scale" && answer.kind === "scale") {
+    return { outcome: question.outcome, points: answer.value }
+  }
+
+  if (question.kind === "yesno" && answer.kind === "yesno") {
+    return { outcome: question.outcome, points: answer.value ? 1 : 0 }
   }
 
   throw new Error("Unknown kind")

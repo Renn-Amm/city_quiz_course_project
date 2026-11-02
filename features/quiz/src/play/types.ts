@@ -59,3 +59,13 @@ interface YesNoAnswer {
 }
 
 export type Answer = ChoiceAnswer | ScaleAnswer | YesNoAnswer
+
+export interface Award {
+  outcome: OutcomeId
+  points: number
+}
+
+export interface Settings {
+  name: string
+  hints?: boolean
+}

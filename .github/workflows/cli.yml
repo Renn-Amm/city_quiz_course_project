@@ -1,0 +1,18 @@
+name: cli
+
+on:
+  push:
+    paths:
+      - "apps/cli/**"
+      - "features/quiz/**"
+      - "internal/tooling/**"
+      - ".github/workflows/cli.yml"
+      - ".github/actions/**"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @platform/cli lint

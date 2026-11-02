@@ -1,0 +1,4 @@
+{
+  "extends": "@platform/tooling/typescript",
+  "include": ["src", "knip.config.ts"]
+}

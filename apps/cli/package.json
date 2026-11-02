@@ -1,0 +1,25 @@
+{
+  "name": "@platform/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "lint": "pnpm run \"/^lint-.*/\"",
+    "lint-typecheck": "tsc --noEmit",
+    "lint-eslint": "eslint .",
+    "lint-prettier": "prettier --check .",
+    "lint-knip": "knip",
+    "clean": "rm -rf node_modules/.cache tsconfig.tsbuildinfo",
+    "start": "node ."
+  },
+  "dependencies": {
+    "@platform/quiz": "workspace:*"
+  },
+  "devDependencies": {
+    "@platform/tooling": "workspace:*",
+    "eslint": "catalog:",
+    "knip": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  }
+}

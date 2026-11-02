@@ -1,4 +1,4 @@
-import { type Outcome, type Question, type Quiz } from "./lib/types.ts"
+import type { Outcome, Question, Quiz } from "./play/index.ts"
 
 export const outcomes: Outcome[] = [
   {
