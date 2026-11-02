@@ -1,3 +1,9 @@
+# artifacts
 node_modules
+.nx
+
+# misc
+.vscode
 .DS_Store
 Thumbs.db
+npm-debug.log*

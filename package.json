@@ -1,22 +1,22 @@
 {
-  "name": "city-quiz",
-  "version": "1.0.0",
-  "type": "module",
-  "main": "src/index.ts",
+  "name": "quiz-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^12.15.0",
+      "onFail": "download"
+    }
+  },
   "scripts": {
-    "lint": "npm run lint-typecheck && npm run lint-prettier && npm run lint-eslint",
-    "lint-typecheck": "tsc",
-    "lint-prettier": "prettier --check .",
-    "lint-eslint": "eslint .",
-    "format": "prettier --write .",
-    "start": "node ."
+    "lint": "nx run-many -t lint",
+    "lint-typecheck": "nx run-many -t lint-typecheck",
+    "lint-eslint": "nx run-many -t lint-eslint",
+    "lint-prettier": "nx run-many -t lint-prettier",
+    "lint-knip": "nx run-many -t lint-knip"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.13.0",
-    "globals": "^17.13.0",
-    "prettier": "^3.9.10",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.0"
+    "nx": "23.3.0"
   }
 }

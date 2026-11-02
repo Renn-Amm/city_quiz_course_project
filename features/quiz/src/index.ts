@@ -14,8 +14,7 @@ const { answers } = loadSavedGame(savedGame)
 
 session.start()
 
-for (const index in quiz.questions) {
-  const question = quiz.questions[index]
+for (const [index, question] of quiz.questions.entries()) {
   const answer = answers[index]
 
   const { outcome, points } = session.record(question, answer)
@@ -27,8 +26,8 @@ for (const index in quiz.questions) {
 
 session.finish()
 
-for (const index in quiz.questions) {
-  console.log(recap(quiz.questions[index], answers[index]))
+for (const [index, question] of quiz.questions.entries()) {
+  console.log(recap(question, answers[index]))
 }
 
 const result = session.result()

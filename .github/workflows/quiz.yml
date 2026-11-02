@@ -1,0 +1,17 @@
+name: quiz
+
+on:
+  push:
+    paths:
+      - "features/quiz/**"
+      - "internal/tooling/**"
+      - ".github/workflows/quiz.yml"
+      - ".github/actions/**"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter quiz lint

@@ -1,0 +1,13 @@
+packages:
+  - "internal/*"
+  - "features/*"
+  - "apps/*"
+
+catalog:
+  eslint: "^10.13.0"
+  knip: "^6.42.0"
+  prettier: "^3.9.10"
+  typescript: "^6.0.3"
+
+allowBuilds:
+  nx: true
