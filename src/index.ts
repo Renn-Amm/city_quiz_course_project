@@ -1,50 +1,40 @@
-interface Choice {
-  label: string
-  points: number
+import { outcome, questions } from "./data.ts"
+import { award, recap, show } from "./quiz.ts"
+import { type Answer } from "./types.ts"
+
+const answers: Answer[] = [
+  { kind: "choice", picked: { label: "Reading on the beach", points: 4 } },
+  { kind: "scale", value: 3 },
+  { kind: "yesno", value: false },
+]
+
+let total = 0
+
+for (const index in questions) {
+  const question = questions[index]
+  const answer = answers[index]
+
+  const points = award(answer)
+  total += points
+
+  console.log(show(question))
+  console.log(`Answer worth ${points} points`)
+  console.log()
 }
- 
-interface Question {
-  text: string
-  choices: Choice[]
+
+console.log(`Total ${total}`)
+console.log()
+
+for (const index in questions) {
+  console.log(recap(questions[index], answers[index]))
 }
- 
-interface Outcome {
-  title: string
-  description: string
-  country?: string
-  vibe: "beach" | "mountains" | "big city"
-}
- 
-const question: Question = {
-  text: "It's Saturday morning. What are you doing?",
-  choices: [
-    { label: "Getting a croissant at a cafe", points: 1 },
-    { label: "Hiking outside the city", points: 2 },
-    { label: "Walking around a night market", points: 3 },
-    { label: "Reading on the beach", points: 4 },
-  ],
-}
- 
-const outcome: Outcome = {
-  title: "Barcelona",
-  country: "Spain",
-  vibe: "beach",
-  description:
-    "Beach, sun and late dinners. You like a relaxed city by the sea.",
-}
- 
-const answer = 3
- 
-const picked = question.choices[answer]
- 
-console.log(question.text)
-console.log(`You chose ${picked.label} (${picked.points} points)`)
- 
+
 const place = outcome.country
   ? `${outcome.title}, ${outcome.country}`
   : outcome.title
- 
+
 const card = `=== ${place} (${outcome.vibe}) ===
 ${outcome.description}`
- 
+
+console.log()
 console.log(card)
