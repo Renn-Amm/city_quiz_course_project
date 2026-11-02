@@ -1,3 +1,8 @@
+export interface Quiz {
+  outcomes: Outcome[]
+  questions: Question[]
+}
+
 export type OutcomeId = "barcelona" | "tokyo" | "reykjavik" | "newyork"
 
 export interface Outcome {
@@ -16,6 +21,7 @@ export interface Choice {
 
 interface BaseQuestion {
   text: string
+  hint?: string
 }
 
 interface ChoiceQuestion extends BaseQuestion {

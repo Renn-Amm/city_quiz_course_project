@@ -1,4 +1,4 @@
-import { type Outcome, type Question } from "./types.ts"
+import { type Outcome, type Question, type Quiz } from "./lib/types.ts"
 
 export const outcomes: Outcome[] = [
   {
@@ -35,10 +35,11 @@ export const outcomes: Outcome[] = [
   },
 ]
 
-export const questions: Question[] = [
+const questions: Question[] = [
   {
     kind: "choice",
     text: "It's Saturday morning. What are you doing?",
+    hint: "Pick what sounds best, not what you usually do.",
     choices: [
       {
         label: "Getting a bagel on the way to work",
@@ -60,6 +61,7 @@ export const questions: Question[] = [
   {
     kind: "yesno",
     text: "Would you trade sunshine for the northern lights?",
+    hint: "They show up on clear winter nights.",
     outcome: "reykjavik",
   },
   {
@@ -68,3 +70,5 @@ export const questions: Question[] = [
     outcome: "barcelona",
   },
 ]
+
+export const quiz: Readonly<Quiz> = { outcomes, questions }

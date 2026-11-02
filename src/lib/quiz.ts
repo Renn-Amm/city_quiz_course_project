@@ -1,20 +1,24 @@
+import { type Settings } from "./load.ts"
 import { type Answer, type Question } from "./types.ts"
 
-export function show(question: Question): string {
+export function show(question: Question, settings: Settings): string {
+  const hint =
+    question.hint && settings.hints !== false ? `\nHint: ${question.hint}` : ""
+
   if (question.kind === "choice") {
     const choices = question.choices.map(
       (choice, index) => `  ${index + 1}. ${choice.label}`,
     )
 
-    return `${question.text}\n${choices.join("\n")}`
+    return `${question.text}\n${choices.join("\n")}${hint}`
   }
 
   if (question.kind === "scale") {
-    return `${question.text} (1 = ${question.low}, 5 = ${question.high})`
+    return `${question.text} (1 = ${question.low}, 5 = ${question.high})${hint}`
   }
 
   if (question.kind === "yesno") {
-    return `${question.text} (yes or no)`
+    return `${question.text} (yes or no)${hint}`
   }
 
   throw new Error("Unknown kind")

@@ -1,41 +1,34 @@
-import { outcomes, questions } from "./data.ts"
-import { recap, show } from "./quiz.ts"
-import { Session } from "./session.ts"
-import { type Answer } from "./types.ts"
+import { quiz } from "./data.ts"
+import { loadSavedGame, loadSettings } from "./lib/load.ts"
+import { recap, show } from "./lib/quiz.ts"
+import { Session } from "./lib/session.ts"
+import { savedGame, savedSettings } from "./saved.ts"
 
-const answers: Answer[] = [
-  {
-    kind: "choice",
-    picked: {
-      label: "Reading on the beach",
-      outcome: "barcelona",
-      points: 4,
-    },
-  },
-  { kind: "scale", value: 3 },
-  { kind: "yesno", value: false },
-  { kind: "yesno", value: true },
-]
+const settings = loadSettings(savedSettings)
 
-const session = new Session(outcomes)
+console.log(`Hello, ${settings.name}`)
+console.log()
+
+const session = new Session(quiz.outcomes)
+const { answers } = loadSavedGame(savedGame)
 
 session.start()
 
-for (const index in questions) {
-  const question = questions[index]
+for (const index in quiz.questions) {
+  const question = quiz.questions[index]
   const answer = answers[index]
 
   const { outcome, points } = session.record(question, answer)
 
-  console.log(show(question))
+  console.log(show(question, settings))
   console.log(`Answer worth ${points} points for ${outcome}`)
   console.log()
 }
 
 session.finish()
 
-for (const index in questions) {
-  console.log(recap(questions[index], answers[index]))
+for (const index in quiz.questions) {
+  console.log(recap(quiz.questions[index], answers[index]))
 }
 
 const result = session.result()
@@ -52,4 +45,22 @@ console.log("You got this because:")
 
 for (const reason of session.explain()) {
   console.log(`- ${reason}`)
+}
+
+console.log()
+
+const brokenSaves = [
+  () => loadSavedGame('{"answers":[{"kind":"scale","value":"five"}]}'),
+  () => loadSettings('{"name":"Aung","hints":"sometimes"}'),
+  () => loadSettings('{"name":"Aung"'),
+]
+
+for (const load of brokenSaves) {
+  try {
+    load()
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message)
+    }
+  }
 }
