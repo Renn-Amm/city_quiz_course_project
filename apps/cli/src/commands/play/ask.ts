@@ -1,10 +1,14 @@
 import { confirm, input, select } from "@inquirer/prompts"
-import { type Answer, type Question, type Settings } from "@platform/quiz/play"
+import {
+  type Prompt,
+  type Settings,
+  type Submission,
+} from "@platform/quiz/play"
 
 export async function ask(
   settings: Settings,
-  question: Question,
-): Promise<Answer> {
+  question: Prompt,
+): Promise<Submission> {
   const hint =
     question.hint && settings.hints !== false ? `\nHint: ${question.hint}` : ""
   const message = `${question.text}${hint}`

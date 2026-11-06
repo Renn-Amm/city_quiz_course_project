@@ -1,8 +1,16 @@
 import outline, { countKinds as kinds } from "@platform/quiz/outline"
-import { type Answer, recap, Session } from "@platform/quiz/play"
-import { loadQuiz } from "@platform/quiz/quizzes"
+import {
+  isProgressResponse,
+  isQuizResponse,
+  isResultResponse,
+  isStartedResponse,
+  recap,
+  type Submission,
+} from "@platform/quiz/play"
 import { readSettings } from "@platform/quiz/saved"
 
+import { call, readBody } from "../../lib/api.ts"
+import { printResult } from "../../lib/result.ts"
 import { locateSettings } from "../../lib/saved.ts"
 import { ask } from "./ask.ts"
 
@@ -14,7 +22,12 @@ export default async function play(
   quizName: string,
   options: Options,
 ): Promise<void> {
-  const quiz = await loadQuiz(quizName)
+  const quizResponse = await call(`/quizzes/${quizName}`)
+  const quiz = await readBody(quizResponse)
+  if (!isQuizResponse(quiz)) {
+    throw new Error("The server sent a quiz in the wrong shape")
+  }
+
   const settings = await readSettings(locateSettings())
 
   console.log(`Hello, ${options.name ?? settings.name}`)
@@ -35,49 +48,64 @@ export default async function play(
   )
   console.log()
 
+  const startResponse = await call("/session", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ quiz: quizName }),
+  })
+  const started = await readBody(startResponse)
+  if (!isStartedResponse(started)) {
+    throw new Error("The server did not send a session id")
+  }
+
+  const id = started.session_id
+  const submissions: Submission[] = []
+
   console.log("## Questions")
   console.log()
 
-  const session = new Session(quiz.outcomes)
-  const answers: Answer[] = []
+  for (const prompt of quiz.questions) {
+    const progressResponse = await call("/session", {
+      headers: { "x-session-id": id },
+    })
+    const progress = await readBody(progressResponse)
+    if (!isProgressResponse(progress)) {
+      throw new Error("The server sent progress in the wrong shape")
+    }
 
-  session.start()
+    console.log(`Question ${progress.answered + 1} of ${progress.total}`)
 
-  for (const question of quiz.questions) {
-    const answer = await ask(settings, question)
-    const { outcome, points } = session.record(question, answer)
+    const submission = await ask(settings, prompt)
 
-    answers.push(answer)
+    await call("/session/answer", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-session-id": id },
+      body: JSON.stringify(submission),
+    })
 
-    console.log(`Your answer worth ${points} points for ${outcome}`)
+    submissions.push(submission)
+
     console.log()
   }
-
-  session.finish()
 
   console.log("## Recap")
   console.log()
 
-  for (const [index, question] of quiz.questions.entries()) {
-    console.log(recap(question, answers[index]))
+  for (const [index, prompt] of quiz.questions.entries()) {
+    console.log(recap(prompt, submissions[index]))
   }
 
   console.log()
   console.log("## Result")
-
-  const result = session.result()
-
-  const place = result.country
-    ? `${result.title}, ${result.country}`
-    : result.title
-
   console.log()
-  console.log(`You are: ${place} (${result.vibe})`)
-  console.log(result.description)
-  console.log()
-  console.log("You got this because:")
 
-  for (const reason of session.explain()) {
-    console.log(`- ${reason}`)
+  const resultResponse = await call("/session/result", {
+    headers: { "x-session-id": id },
+  })
+  const result = await readBody(resultResponse)
+  if (!isResultResponse(result)) {
+    throw new Error("The server sent a result in the wrong shape")
   }
+
+  printResult(result)
 }

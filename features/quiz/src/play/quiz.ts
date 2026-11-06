@@ -1,11 +1,13 @@
 import {
   type Answer,
   type Award,
+  type Prompt,
   type Question,
   type Settings,
+  type Submission,
 } from "./types.ts"
 
-export function show(question: Question, settings: Settings): string {
+export function show(question: Prompt, settings: Settings): string {
   const hint =
     question.hint && settings.hints !== false ? `\nHint: ${question.hint}` : ""
 
@@ -28,7 +30,7 @@ export function show(question: Question, settings: Settings): string {
   throw new Error("Unknown kind")
 }
 
-export function recap(question: Question, answer: Answer): string {
+export function recap(question: Prompt, answer: Submission): string {
   if (question.kind !== answer.kind) {
     throw new Error("The answer does not match the question")
   }

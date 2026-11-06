@@ -3,9 +3,7 @@
     {
       "kind": "choice",
       "picked": {
-        "label": "Reading on the beach",
-        "outcome": "barcelona",
-        "points": 4
+        "label": "Reading on the beach"
       }
     },
     {

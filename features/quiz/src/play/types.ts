@@ -105,3 +105,24 @@ export type Submission = ChoiceSubmission | ScaleSubmission | YesNoSubmission
 export interface PromptChoice {
   label: string
 }
+
+export interface QuizResponse {
+  questions: Prompt[]
+}
+
+export interface StartedResponse {
+  session_id: string
+}
+
+export interface ProgressResponse {
+  answered: number
+  total: number
+}
+
+export interface ResultResponse {
+  title: string
+  description: string
+  country?: string
+  vibe: Outcome["vibe"]
+  reasons: string[]
+}

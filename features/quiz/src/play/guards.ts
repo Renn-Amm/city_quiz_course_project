@@ -2,9 +2,16 @@ import {
   type Answer,
   type Choice,
   type Outcome,
+  type ProgressResponse,
+  type Prompt,
+  type PromptChoice,
   type Question,
   type Quiz,
+  type QuizResponse,
+  type ResultResponse,
   type Settings,
+  type StartedResponse,
+  type Submission,
 } from "./types.ts"
 
 export function isQuiz(value: unknown): value is Quiz {
@@ -166,4 +173,153 @@ export function isSettings(value: unknown): value is Settings {
   }
 
   return true
+}
+
+export function isSubmission(value: unknown): value is Submission {
+  if (typeof value !== "object" || value === null) {
+    return false
+  }
+
+  if (!("kind" in value) || typeof value.kind !== "string") {
+    return false
+  }
+
+  if (value.kind === "choice") {
+    return "picked" in value && isPromptChoice(value.picked)
+  }
+
+  if (value.kind === "scale") {
+    return (
+      "value" in value &&
+      typeof value.value === "number" &&
+      value.value >= 1 &&
+      value.value <= 5
+    )
+  }
+
+  if (value.kind === "yesno") {
+    return "value" in value && typeof value.value === "boolean"
+  }
+
+  return false
+}
+
+export function isPromptChoice(value: unknown): value is PromptChoice {
+  if (typeof value !== "object" || value === null) {
+    return false
+  }
+
+  if (!("label" in value) || typeof value.label !== "string") {
+    return false
+  }
+
+  return true
+}
+
+export function isPrompt(value: unknown): value is Prompt {
+  if (typeof value !== "object" || value === null) {
+    return false
+  }
+
+  if (!("text" in value) || typeof value.text !== "string") {
+    return false
+  }
+
+  if (
+    "hint" in value &&
+    value.hint !== undefined &&
+    typeof value.hint !== "string"
+  ) {
+    return false
+  }
+
+  if (!("kind" in value)) {
+    return false
+  }
+
+  if (value.kind === "choice") {
+    return (
+      "choices" in value &&
+      Array.isArray(value.choices) &&
+      value.choices.every((choice) => isPromptChoice(choice))
+    )
+  }
+
+  if (value.kind === "scale") {
+    return (
+      "low" in value &&
+      typeof value.low === "string" &&
+      "high" in value &&
+      typeof value.high === "string"
+    )
+  }
+
+  return value.kind === "yesno"
+}
+
+export function isQuizResponse(value: unknown): value is QuizResponse {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "questions" in value &&
+    Array.isArray(value.questions) &&
+    value.questions.every((question) => isPrompt(question))
+  )
+}
+
+export function isStartedResponse(value: unknown): value is StartedResponse {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "session_id" in value &&
+    typeof value.session_id === "string"
+  )
+}
+
+export function isProgressResponse(value: unknown): value is ProgressResponse {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "answered" in value &&
+    typeof value.answered === "number" &&
+    "total" in value &&
+    typeof value.total === "number"
+  )
+}
+
+export function isResultResponse(value: unknown): value is ResultResponse {
+  if (typeof value !== "object" || value === null) {
+    return false
+  }
+
+  if (!("title" in value) || typeof value.title !== "string") {
+    return false
+  }
+
+  if (!("description" in value) || typeof value.description !== "string") {
+    return false
+  }
+
+  if (
+    "country" in value &&
+    value.country !== undefined &&
+    typeof value.country !== "string"
+  ) {
+    return false
+  }
+
+  if (
+    !("vibe" in value) ||
+    (value.vibe !== "beach" &&
+      value.vibe !== "mountains" &&
+      value.vibe !== "big city")
+  ) {
+    return false
+  }
+
+  return (
+    "reasons" in value &&
+    Array.isArray(value.reasons) &&
+    value.reasons.every((reason) => typeof reason === "string")
+  )
 }

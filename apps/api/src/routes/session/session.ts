@@ -100,11 +100,13 @@ const session: FastifyPluginAsync = async (fastify) => {
         entry.finished = true
       }
 
-      const { title, description } = entry.session.result()
+      const { title, description, country, vibe } = entry.session.result()
 
       return {
         title,
         description,
+        country,
+        vibe,
         reasons: entry.session.explain(),
       }
     },
