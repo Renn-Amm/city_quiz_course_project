@@ -1,74 +1,153 @@
 # City Quiz
 
-A quiz that tells you which city you should live in: Barcelona, Tokyo, Reykjavik or New York. Every answer gives points to a city, and the city with the most points wins. At the end you see why you got it.
+Find the city you should live in. Answer a few questions about how you spend your time, and City Quiz matches you with Barcelona, Tokyo, Reykjavik or New York, then tells you exactly which answers got you there.
 
-The quiz runs on a small server that keeps the scoring to itself. The terminal app only ever sees the questions and sends back what you picked.
+City Quiz is a small TypeScript monorepo: a Fastify API that owns the questions and the scoring, and a terminal client that only ever sees the questions and sends back what you picked.
 
-Course project for M3 Advanced JavaScript and TypeScript.
+## Features
 
-## Packages
+- Three kinds of question: multiple choice, a 1 to 5 scale, and yes or no
+- Scoring stays on the server, so the client never sees a point or an outcome
+- A result card with the reasons behind it
+- Progress as you go ("Question 2 of 4")
+- Replay a saved game without answering again
+- Quizzes are plain JSON files, checked against their expected shape when they load
+- Clear messages for every failure: server down, unknown quiz, broken file, wrong answer
 
-| Package             | Folder             | What it holds                                                             |
-| ------------------- | ------------------ | ------------------------------------------------------------------------- |
-| `@platform/api`     | `apps/api`         | The Fastify server that serves the quiz and scores each session           |
-| `@platform/cli`     | `apps/cli`         | The `quiz` command with `play` and `replay`                               |
-| `@platform/quiz`    | `features/quiz`    | Types, guards, scoring, the outline, the services and the quiz JSON files |
-| `@platform/tooling` | `internal/tooling` | Shared TypeScript, Prettier and ESLint settings                           |
+## Tech stack
 
-Inside `@platform/quiz`, every folder in `src` is a modlet that other packages import by name: `play`, `quizzes`, `saved`, `outline` and `services`.
+- TypeScript running directly on Node.js 24
+- Fastify for the API
+- Commander and Inquirer for the terminal client
+- pnpm workspaces with a shared version catalog
+- Nx for running tasks in dependency order with caching
+- ESLint (type-aware), Prettier and Knip
+- Node's built-in test runner
+- GitHub Actions, one workflow per package
 
-## Requirements
-
-- Node.js 24
-- pnpm 12 (downloaded for you through `devEngines` if missing)
-
-## Run
-
-Start the server in one terminal:
+## Getting started
 
 ```sh
 pnpm install
+```
+
+pnpm 12 is pinned in `package.json` and downloaded for you if you have a different version.
+
+Start the API in one terminal:
+
+```sh
 pnpm api
 ```
 
-Then play in another:
+Play in another:
 
 ```sh
 pnpm --filter @platform/cli start play
-pnpm --filter @platform/cli start play --name Bo
-pnpm --filter @platform/cli start replay
+```
+
+## Usage
+
+```sh
+pnpm --filter @platform/cli start play                 # answer the questions
+pnpm --filter @platform/cli start play --name Bo       # with your own name
+pnpm --filter @platform/cli start play cities          # pick a quiz by name
+pnpm --filter @platform/cli start replay               # replay the saved answers
 pnpm --filter @platform/cli start --help
 ```
 
-`play` asks every question and shows how far you are. `replay` plays the quiz again with the answers in `apps/cli/saved/game.json`. Set `QUIZ_API_URL` to point the CLI at a server somewhere other than `http://localhost:3000`.
+The client talks to `http://localhost:3000` by default. Point it somewhere else with `QUIZ_API_URL`:
+
+```sh
+QUIZ_API_URL=http://quiz.example.com pnpm --filter @platform/cli start play
+```
+
+Your name and hint setting live in `apps/cli/saved/settings.json`, and the answers used by `replay` live in `apps/cli/saved/game.json`.
 
 ## API
 
-| Method | Path              | What it does                                                         |
-| ------ | ----------------- | -------------------------------------------------------------------- |
-| GET    | `/quizzes/:name`  | The questions of a quiz, without any points or outcomes              |
-| POST   | `/session`        | Starts a session for `{ "quiz": "cities" }` and returns `session_id` |
-| GET    | `/session`        | How many questions have an answer, and how many there are            |
-| POST   | `/session/answer` | Sends the answer to the next question                                |
-| GET    | `/session/result` | The city, why you got it, and the reasons                            |
+| Method | Path              | Description                                                       |
+| ------ | ----------------- | ----------------------------------------------------------------- |
+| GET    | `/quizzes/:name`  | The questions of a quiz, without points or outcomes               |
+| POST   | `/session`        | Start a session with `{ "quiz": "cities" }`, returns `session_id` |
+| GET    | `/session`        | Progress: how many questions are answered, out of how many        |
+| POST   | `/session/answer` | Answer the next question                                          |
+| GET    | `/session/result` | The city, its description, and the answers that led to it         |
 
-Every `/session` route except the first needs the `x-session-id` header.
+Every route under `/session` except the first needs an `x-session-id` header.
 
-## Data files
+| Status | When                                                        |
+| ------ | ----------------------------------------------------------- |
+| 400    | The body is missing or does not fit the question            |
+| 401    | The session id is missing or unknown                        |
+| 404    | There is no quiz with that name                             |
+| 409    | Every question already has an answer, or not all of them do |
 
-A quiz is a JSON file in `features/quiz/src/quizzes`, named after the quiz, such as `cities.json`. It has a list of `outcomes`, each with an `id`, `title`, `description`, `vibe` and an optional `country`, and a list of `questions` of three kinds: `choice`, `scale` and `yesno`. To add a quiz, add a file there; the server and the CLI find it by its name. A file in the wrong shape is refused with a message.
+## Project structure
 
-## Check
-
-```sh
-pnpm lint
-pnpm test
-pnpm nx graph
+```
+apps/
+  api/                 Fastify server
+    src/routes/        quizzes and session routes
+  cli/                 terminal client
+    src/commands/      play and replay
+    saved/             settings and the saved game
+features/
+  quiz/                shared quiz logic
+    src/play/          types, guards, scoring, the Session class
+    src/quizzes/       quiz JSON files and the loader
+    src/services/      typed client for the API
+    src/saved/         reading the saved files
+    src/outline/       the quiz outline
+internal/
+  tooling/             shared TypeScript, ESLint and Prettier config
 ```
 
-`pnpm lint` runs the type check, ESLint, Prettier and Knip in every package, with `@platform/tooling` first. `pnpm test` runs the API tests, which call every route, including the ways they fail.
+Each folder under `src` has a single `index.ts` that is its only public entry point. Other packages import `@platform/quiz/play`, `@platform/quiz/services` and so on, never a file inside a folder.
 
-## What is next
+## Adding a quiz
 
-- A browser client for the same server
+Add a JSON file to `features/quiz/src/quizzes`, named after the quiz:
+
+```json
+{
+  "outcomes": [
+    {
+      "id": "barcelona",
+      "title": "Barcelona",
+      "country": "Spain",
+      "vibe": "beach",
+      "description": "Beach, sun and late dinners."
+    }
+  ],
+  "questions": [
+    {
+      "kind": "yesno",
+      "text": "Is dinner at 10pm normal for you?",
+      "outcome": "barcelona"
+    }
+  ]
+}
+```
+
+- `vibe` is `beach`, `mountains` or `big city`; `country` is optional
+- A `choice` question has `choices`, each with a `label`, an `outcome` and `points`
+- A `scale` question has `low`, `high` and an `outcome`
+- Any question can have a `hint`
+
+The API and the client find the quiz by its file name, so `music.json` is played with `play music`.
+
+## Development
+
+```sh
+pnpm lint          # type check, ESLint, Prettier and Knip in every package
+pnpm test          # API tests
+pnpm nx graph      # how the packages depend on each other
+```
+
+Each package has its own GitHub workflow that runs only when that package, or something it depends on, changes.
+
+## Roadmap
+
+- A browser client for the same API
 - Sessions that survive a server restart
+- More quizzes

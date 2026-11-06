@@ -1,17 +1,18 @@
 # @platform/quiz
 
-Everything the city quiz needs, split into modlets that other packages import by name.
+The shared quiz logic used by both the API and the terminal client. Each entry point below is a folder with a single `index.ts`; nothing inside a folder can be imported directly.
 
-| Import                   | What it gives                                                     |
-| ------------------------ | ----------------------------------------------------------------- |
-| `@platform/quiz/play`    | Types, guards, `show`, `recap`, `award` and the `Session` class   |
-| `@platform/quiz/quizzes` | `loadQuiz(name)`, which reads, parses and checks a quiz JSON file |
-| `@platform/quiz/saved`   | `readSavedGame`, `readSettings` and the functions they use        |
-| `@platform/quiz/outline` | `outline(quiz)` as the default export and `countKinds(quiz)`      |
+| Import                    | What it gives                                                          |
+| ------------------------- | ---------------------------------------------------------------------- |
+| `@platform/quiz/play`     | Types, guards, `show`, `recap`, `award` and the `Session` class        |
+| `@platform/quiz/quizzes`  | `loadQuiz(name)`, which reads, parses and checks a quiz JSON file      |
+| `@platform/quiz/services` | `getQuiz`, `startSession`, `getProgress`, `sendAnswer` and `getResult` |
+| `@platform/quiz/saved`    | `readSavedGame` and `readSettings`                                     |
+| `@platform/quiz/outline`  | `outline(quiz)` as the default export, and `countKinds(quiz)`          |
 
-Files inside a folder cannot be imported from outside, only the folder's `index.ts`.
+Every reply from the API is checked with a guard before it is used, so a server that sends the wrong shape fails with a clear message instead of a crash further down.
 
-## Lint
+## Check
 
 ```sh
 pnpm --filter @platform/quiz lint
