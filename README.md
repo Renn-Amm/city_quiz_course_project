@@ -8,6 +8,7 @@ Course project for M3 Advanced JavaScript and TypeScript.
 
 | Package             | Folder             | What it holds                                                   |
 | ------------------- | ------------------ | --------------------------------------------------------------- |
+| `@platform/api`     | `apps/api`         | The Fastify server that serves the quiz and scores sessions     |
 | `@platform/cli`     | `apps/cli`         | The `quiz` command with `play` and `replay`                     |
 | `@platform/quiz`    | `features/quiz`    | Quiz types, guards, scoring, the outline and the quiz JSON file |
 | `@platform/tooling` | `internal/tooling` | Shared TypeScript, Prettier and ESLint settings                 |

@@ -4,7 +4,15 @@
   "targetDefaults": {
     "lint": {
       "cache": true,
-      "dependsOn": ["^lint"]
+      "dependsOn": [
+        "^lint"
+      ]
+    },
+    "test": {
+      "cache": true,
+      "dependsOn": [
+        "^lint"
+      ]
     }
   }
 }

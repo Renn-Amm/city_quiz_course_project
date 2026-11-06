@@ -67,3 +67,41 @@ export interface Settings {
   name: string
   hints?: boolean
 }
+
+interface ChoicePrompt extends BaseQuestion {
+  kind: "choice"
+  choices: PromptChoice[]
+}
+
+interface ScalePrompt extends BaseQuestion {
+  kind: "scale"
+  low: string
+  high: string
+}
+
+interface YesNoPrompt extends BaseQuestion {
+  kind: "yesno"
+}
+
+export type Prompt = ChoicePrompt | ScalePrompt | YesNoPrompt
+
+interface ChoiceSubmission {
+  kind: "choice"
+  picked: PromptChoice
+}
+
+interface ScaleSubmission {
+  kind: "scale"
+  value: number
+}
+
+interface YesNoSubmission {
+  kind: "yesno"
+  value: boolean
+}
+
+export type Submission = ChoiceSubmission | ScaleSubmission | YesNoSubmission
+
+export interface PromptChoice {
+  label: string
+}

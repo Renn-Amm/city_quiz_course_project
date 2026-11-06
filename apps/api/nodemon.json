@@ -1,0 +1,9 @@
+{
+  "verbose": true,
+  "ext": "ts",
+  "execMap": {
+    "ts": "node"
+  },
+  "ignore": [".git"],
+  "watch": ["src"]
+}

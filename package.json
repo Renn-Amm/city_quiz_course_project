@@ -15,7 +15,9 @@
     "lint-eslint": "nx run-many -t lint-eslint",
     "lint-prettier": "nx run-many -t lint-prettier",
     "lint-knip": "nx run-many -t lint-knip",
-    "start": "nx run @platform/cli:start"
+    "start": "nx run @platform/cli:start",
+    "test": "nx run-many -t test",
+    "api": "nx run @platform/api:start"
   },
   "devDependencies": {
     "nx": "23.3.0"

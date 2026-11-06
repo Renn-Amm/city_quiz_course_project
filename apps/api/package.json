@@ -1,0 +1,33 @@
+{
+  "name": "@platform/api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "imports": {
+    "#shared/*": "./src/shared/*/index.ts"
+  },
+  "scripts": {
+    "lint": "pnpm run \"/^lint-.*/\"",
+    "lint-typecheck": "tsc --noEmit",
+    "lint-eslint": "eslint .",
+    "lint-prettier": "prettier --check .",
+    "lint-knip": "knip",
+    "clean": "rm -rf node_modules/.cache tsconfig.tsbuildinfo",
+    "dev": "nodemon src/index.ts",
+    "start": "node .",
+    "test": "node --test \"src/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@platform/quiz": "workspace:*",
+    "fastify": "^5.8.0"
+  },
+  "devDependencies": {
+    "@platform/tooling": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "knip": "catalog:",
+    "nodemon": "^3.1.10",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  }
+}
