@@ -10,41 +10,19 @@ export function toAnswer(
 ): Answer | undefined {
   if (question.kind === "choice" && submission.kind === "choice") {
     const picked = question.choices.find(
-      ({ label }) => label === submission.picked?.label,
+      ({ label }) => label === submission.picked.label,
     )
-    if (!picked) {
-      return undefined
-    }
 
-    return {
-      kind: "choice",
-      picked,
-    }
+    return picked ? { kind: "choice", picked } : undefined
   }
 
   if (question.kind === "scale" && submission.kind === "scale") {
-    const { value } = submission
-    if (typeof value === "number" && value >= 1 && value <= 5) {
-      return {
-        kind: "scale",
-        value,
-      }
-    }
-
-    return undefined
+    return { kind: "scale", value: submission.value }
   }
 
   if (question.kind === "yesno" && submission.kind === "yesno") {
-    const { value } = submission
-    if (typeof value !== "boolean") {
-      return undefined
-    }
-
-    return {
-      kind: "yesno",
-      value,
-    }
+    return { kind: "yesno", value: submission.value }
   }
 
-  throw new Error("Unknown kind")
+  return undefined
 }

@@ -126,3 +126,30 @@ await test("a full session gives the result and refuses extra answers", async ()
   assert.equal(result.statusCode, 200)
   assert.equal(result.json<{ title: string }>().title, "Barcelona")
 })
+
+await test("POST /session/answer refuses bodies in the wrong shape", async () => {
+  const id = await start()
+
+  const bodies = [
+    {},
+    { kind: "choice" },
+    { kind: "choice", picked: "Reading on the beach" },
+    { kind: "scale", value: 9 },
+    { kind: "yesno", value: "yes" },
+    { kind: "guess", value: 1 },
+  ]
+
+  for (const body of bodies) {
+    const reply = await answer(id, body)
+
+    assert.equal(reply.statusCode, 400)
+  }
+
+  const progress = await app.inject({
+    method: "GET",
+    url: "/session",
+    headers: { "x-session-id": id },
+  })
+
+  assert.deepEqual(progress.json(), { answered: 0, total: 4 })
+})

@@ -9,8 +9,8 @@ import {
   startSession,
 } from "@platform/quiz/services"
 
-import { printResult } from "../../lib/result.ts"
-import { locateSettings } from "../../lib/saved.ts"
+import { printResult } from "#lib/result"
+import { locateSettings } from "#lib/saved"
 import { ask } from "./ask.ts"
 
 interface Options {

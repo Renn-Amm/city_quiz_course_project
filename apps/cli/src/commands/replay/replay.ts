@@ -8,8 +8,8 @@ import {
   startSession,
 } from "@platform/quiz/services"
 
-import { printResult } from "../../lib/result.ts"
-import { locateSavedGame, locateSettings } from "../../lib/saved.ts"
+import { printResult } from "#lib/result"
+import { locateSavedGame, locateSettings } from "#lib/saved"
 
 export default async function replay(quizName: string): Promise<void> {
   const quiz = await getQuiz(quizName)

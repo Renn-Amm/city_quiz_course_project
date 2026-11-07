@@ -53,6 +53,8 @@ Or play in the terminal:
 pnpm --filter @platform/cli start play
 ```
 
+You need Node.js 24 or newer. Nothing else has to be installed by hand.
+
 ## Usage
 
 ```sh
@@ -115,6 +117,14 @@ internal/
   tooling/             shared TypeScript, ESLint and Prettier config
 ```
 
+| Package             | What it holds                                                        |
+| ------------------- | -------------------------------------------------------------------- |
+| `@platform/api`     | The routes and the sessions, the only place that knows points        |
+| `@platform/cli`     | The `play` and `replay` commands                                     |
+| `@platform/web`     | The page that asks the questions and shows the result card           |
+| `@platform/quiz`    | Types, guards, scoring, quiz files and the services both clients use |
+| `@platform/tooling` | Shared TypeScript, ESLint and Prettier config                        |
+
 Each folder under `src` has a single `index.ts` that is its only public entry point. Other packages import `@platform/quiz/play`, `@platform/quiz/services` and so on, never a file inside a folder.
 
 ## Adding a quiz
@@ -147,19 +157,38 @@ Add a JSON file to `features/quiz/src/quizzes`, named after the quiz:
 - A `scale` question has `low`, `high` and an `outcome`
 - Any question can have a `hint`
 
-The API and the client find the quiz by its file name, so `music.json` is played with `play music`.
+The API finds the quiz by its file name, so `music.json` is played with `play music` in the terminal and `?quiz=music` in the browser.
 
 ## Development
 
 ```sh
 pnpm lint          # type check, ESLint, Prettier and Knip in every package
 pnpm test          # API tests
+pnpm --filter @platform/web build   # build the page into apps/web/dist
 pnpm nx graph      # how the packages depend on each other
 ```
 
 Each package has its own GitHub workflow that runs only when that package, or something it depends on, changes.
 
-## Roadmap
+## Status
 
-- Sessions that survive a server restart
-- More quizzes
+What works:
+
+- The full game in both clients: questions one at a time, progress, the result card with its reasons
+- Every route checks its input and answers with a clear error and status code
+- Failures show up as a message, in the terminal or in the page, never as a crash
+- Lint, type checks and API tests pass, and every package has its own workflow
+
+What doesn't yet:
+
+- Sessions live in memory, so restarting the API forgets every game in progress
+- The page only knows the API at `http://localhost:3000`
+- `replay` is only in the terminal, the page has no saved game
+- There is a single quiz
+
+What's next:
+
+- Keep sessions in a small database so they survive a restart
+- Let the page pick its server from the address bar or a build setting
+- A list of quizzes, so the page and `play` can show what is there to pick from
+- More quizzes, starting with one about music

@@ -1,4 +1,4 @@
-import { type Submission } from "@platform/quiz/play"
+import { isSubmission } from "@platform/quiz/play"
 import { type FastifyPluginAsync } from "fastify"
 
 import { findQuiz } from "#shared/quizzes"
@@ -48,7 +48,7 @@ const session: FastifyPluginAsync = async (fastify) => {
     },
   )
 
-  fastify.post<{ Body: Submission | undefined; Headers: SessionHeader }>(
+  fastify.post<{ Body: unknown; Headers: SessionHeader }>(
     "/session/answer",
     async (request, reply) => {
       const entry = find(request.headers["x-session-id"])
@@ -62,7 +62,7 @@ const session: FastifyPluginAsync = async (fastify) => {
       }
 
       const submission = request.body
-      if (!submission || submission.kind !== question.kind) {
+      if (!isSubmission(submission) || submission.kind !== question.kind) {
         return reply.code(400).send({ error: "That does not fit the question" })
       }
 
