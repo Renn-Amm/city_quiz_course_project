@@ -1,0 +1,20 @@
+name: web
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "apps/web/**"
+      - "features/quiz/**"
+      - "internal/tooling/**"
+      - ".github/workflows/web.yml"
+      - ".github/actions/**"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm --filter @platform/web lint
+      - run: pnpm --filter @platform/web build

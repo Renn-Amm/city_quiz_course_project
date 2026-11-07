@@ -1,7 +1,12 @@
+import { useServer } from "@platform/quiz/services"
 import { program } from "commander"
 
 import play from "./commands/play/index.ts"
 import replay from "./commands/replay/index.ts"
+
+if (process.env.QUIZ_API_URL) {
+  useServer(process.env.QUIZ_API_URL)
+}
 
 program.name("quiz").description("Take a quiz in the terminal")
 

@@ -2,10 +2,11 @@
 
 Find the city you should live in. Answer a few questions about how you spend your time, and City Quiz matches you with Barcelona, Tokyo, Reykjavik or New York, then tells you exactly which answers got you there.
 
-City Quiz is a small TypeScript monorepo: a Fastify API that owns the questions and the scoring, and a terminal client that only ever sees the questions and sends back what you picked.
+City Quiz is a small TypeScript monorepo: a Fastify API that owns the questions and the scoring, and two clients, one in the terminal and one in the browser, that only ever see the questions and send back what you picked.
 
 ## Features
 
+- Play in the browser or in the terminal, against the same API
 - Three kinds of question: multiple choice, a 1 to 5 scale, and yes or no
 - Scoring stays on the server, so the client never sees a point or an outcome
 - A result card with the reasons behind it
@@ -18,6 +19,7 @@ City Quiz is a small TypeScript monorepo: a Fastify API that owns the questions 
 
 - TypeScript running directly on Node.js 24
 - Fastify for the API
+- Vite and plain DOM code for the browser client
 - Commander and Inquirer for the terminal client
 - pnpm workspaces with a shared version catalog
 - Nx for running tasks in dependency order with caching
@@ -39,7 +41,13 @@ Start the API in one terminal:
 pnpm api
 ```
 
-Play in another:
+Play in the browser from another terminal, then open the address Vite prints:
+
+```sh
+pnpm web
+```
+
+Or play in the terminal:
 
 ```sh
 pnpm --filter @platform/cli start play
@@ -55,11 +63,13 @@ pnpm --filter @platform/cli start replay               # replay the saved answer
 pnpm --filter @platform/cli start --help
 ```
 
-The client talks to `http://localhost:3000` by default. Point it somewhere else with `QUIZ_API_URL`:
+The terminal client talks to `http://localhost:3000` by default. Point it somewhere else with `QUIZ_API_URL`:
 
 ```sh
 QUIZ_API_URL=http://quiz.example.com pnpm --filter @platform/cli start play
 ```
+
+In the browser, pick a quiz with `?quiz=`, for example `http://localhost:5173/?quiz=cities`.
 
 Your name and hint setting live in `apps/cli/saved/settings.json`, and the answers used by `replay` live in `apps/cli/saved/game.json`.
 
@@ -91,11 +101,14 @@ apps/
   cli/                 terminal client
     src/commands/      play and replay
     saved/             settings and the saved game
+  web/                 browser client
+    src/ask/           one question with its buttons
+    src/show/          the result card
 features/
   quiz/                shared quiz logic
     src/play/          types, guards, scoring, the Session class
     src/quizzes/       quiz JSON files and the loader
-    src/services/      typed client for the API
+    src/services/      typed client for the API, used by both clients
     src/saved/         reading the saved files
     src/outline/       the quiz outline
 internal/
@@ -148,6 +161,5 @@ Each package has its own GitHub workflow that runs only when that package, or so
 
 ## Roadmap
 
-- A browser client for the same API
 - Sessions that survive a server restart
 - More quizzes

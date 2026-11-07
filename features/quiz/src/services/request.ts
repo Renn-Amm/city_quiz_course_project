@@ -1,4 +1,8 @@
-const BASE_URL = process.env.QUIZ_API_URL ?? "http://localhost:3000"
+let baseUrl = "http://localhost:3000"
+
+export function useServer(url: string): void {
+  baseUrl = url.replace(/\/+$/, "")
+}
 
 export async function request<Reply extends object = object>(
   path: string,
@@ -29,9 +33,9 @@ export async function call(
   let response: Response
 
   try {
-    response = await fetch(`${BASE_URL}${path}`, init)
+    response = await fetch(`${baseUrl}${path}`, init)
   } catch {
-    throw new Error(`Cannot reach the server at ${BASE_URL}`)
+    throw new Error(`Cannot reach the server at ${baseUrl}`)
   }
 
   if (!response.ok) {

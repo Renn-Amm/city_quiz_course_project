@@ -17,7 +17,8 @@
     "lint-knip": "nx run-many -t lint-knip",
     "start": "nx run @platform/cli:start",
     "test": "nx run-many -t test",
-    "api": "nx run @platform/api:start"
+    "api": "nx run @platform/api:start",
+    "web": "nx run @platform/web:dev"
   },
   "devDependencies": {
     "nx": "23.3.0"

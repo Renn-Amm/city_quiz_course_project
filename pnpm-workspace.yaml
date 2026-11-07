@@ -11,4 +11,5 @@ catalog:
   typescript: "^6.0.3"
 
 allowBuilds:
+  esbuild: true
   nx: true
